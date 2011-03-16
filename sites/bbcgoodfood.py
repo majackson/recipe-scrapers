@@ -6,7 +6,7 @@ import logging
 
 import logging
 
-logger = logging.getLogger("allergy_assistant.parsers.sites.bbcgoodfood")
+logger = logging.getLogger("allergy_assistant.scrapers.sites.bbcgoodfood")
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
@@ -86,5 +86,4 @@ class BbcGoodFood(RecipeWebsiteScraper):
 
 if __name__ == '__main__':
     bbcgoodfood = BbcGoodFood()
-    #r = bbcgoodfood.parse_recipe('http://www.bbcgoodfood.com/recipes/1089637/sweet-potato-and-spinach-bake')
-    #print (r[0], [i for i in r[1]], r[2])
+    bbcgoodfood.get_and_save_all()
