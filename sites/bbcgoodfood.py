@@ -4,8 +4,6 @@ from allergy_assistant.scrapers import RecipeWebsiteScraper
 from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
 import logging
 
-import logging
-
 logger = logging.getLogger("allergy_assistant.scrapers.sites.bbcgoodfood")
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()

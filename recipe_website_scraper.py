@@ -1,16 +1,10 @@
 
 import logging
 from urlparse import urlparse, ParseResult
-from allergy_assistant import models
-#from nltk.corpus import wordnet
+from allergy_assistant import db
 
 class RecipeWebsiteScraper(object):
 
-    def __init__(self):
-        self.source, created = models.Source.objects.get_or_create(source_name=self.SOURCE_NAME)
-        self.source.source_url = self.SOURCE_URL
-        self.source.save()
-    
     def relative_to_absolute(self, start_path, relative_url):
         """converts a relative url at a specified (absolute) location
         :param: start_path - the absolute path from which the relative url is being accessed
@@ -30,28 +24,17 @@ class RecipeWebsiteScraper(object):
 
 
     def save(self, recipe):
-        recipe.parse_self()
-
-        dish, created = models.Dish.objects.get_or_create(dish_name = recipe.recipe_name )
-        dish.save()
-        db_recipe, created = models.Recipe.objects.get_or_create(dish=dish, source=self.source)
-        if created:
-            db_recipe.url = recipe.url
-
-        for r_ingredient in recipe.ingredients:
-            db_ingredient, created = models.Ingredient.objects.get_or_create(ingredient_name = r_ingredient.ingredient_name )
-            db_ingredient.save()
-            db_recipe.ingredients.add(db_ingredient)
-
-        db_recipe.save()
+        doc = recipe.format_mongo_doc()
+        update_spec = {'_id': doc['_id']}
+        db.recipes.update(update_spec, doc, upsert=True)
 
     def get_recipe_list(self):
         """override me"""
-        return [] #recipes
+        raise NotImplementedError("Override me!")
 
     def parse_recipe(self):
         """override me"""
-        return ("", [], "") #recipe name, ingredients, source name
+        raise NotImplementedError("Override me!")
     
     def get_all_recipes(self):
         for recipe_name, recipe_url in self.get_recipe_list():

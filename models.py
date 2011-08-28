@@ -1,14 +1,14 @@
-from nltk.corpus import wordnet
+#from nltk.corpus import wordnet
 
 class ScraperModel():
 
     name_fields = []
 
-    @staticmethod
-    def is_adjective_and_not_noun(word):
-        defs = wordnet.synsets(word)
-        word_is = lambda ss, wt: any(s.lexname.startswith(wt) for s in ss)
-        return not (word_is(defs, 'noun') or not word_is(defs, 'adj'))
+#    @staticmethod
+#    def is_adjective_and_not_noun(word):
+#        defs = wordnet.synsets(word)
+#        word_is = lambda ss, wt: any(s.lexname.startswith(wt) for s in ss)
+#        return not (word_is(defs, 'noun') or not word_is(defs, 'adj'))
 
     @staticmethod
     def parse_name(name):
@@ -56,6 +56,15 @@ class ScraperRecipe(ScraperModel):
         self.source = source
         self.url = url
         self.ingredients = []
+
+    def format_mongo_doc(self):
+        doc = {'_id': self.url,
+                'source': self.source,
+                'url': self.url,
+                'recipe_name': self.recipe_name,
+                'ingredients': [ i.ingredient_name for i in self.ingredients ]
+            }
+        return doc
 
     def add_ingredient(self, ingredient):
         """Adds a single ingredient to the list of ingredients"""
