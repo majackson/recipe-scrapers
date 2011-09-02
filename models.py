@@ -66,9 +66,8 @@ class ScraperRecipe(ScraperModel):
             }
         return doc
 
-    def add_ingredient(self, ingredient):
+    def add_ingredient(self, scraper_ingredient):
         """Adds a single ingredient to the list of ingredients"""
-        scraper_ingredient = ScraperIngredient(ingredient)
         self.ingredients.append(scraper_ingredient)
 
     def add_ingredients(self, ingredients):

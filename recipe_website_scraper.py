@@ -37,9 +37,9 @@ class RecipeWebsiteScraper(object):
         raise NotImplementedError("Override me!")
     
     def get_all_recipes(self):
-        for recipe_name, recipe_url in self.get_recipe_list():
+        for recipe in self.get_recipe_list():
             try:
-                recipe = self.parse_recipe(recipe_url, recipe_name) 
+                self.parse_recipe(recipe) 
                 yield recipe
             except IOError:
                 continue
