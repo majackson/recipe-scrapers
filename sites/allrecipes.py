@@ -35,7 +35,7 @@ class AllRecipes(RecipeWebsiteScraper):
 
     def is_last_page(self, page):
         """Determines whether this page is the last page of recipes"""
-        links = page.cssselect('#ctl00_CenterColumnPlaceHolder_Pager_corePager_pageNumbers *:last')
+        links = page.cssselect('#ctl00_CenterColumnPlaceHolder_Pager_corePager_pageNumbers *')
         last_link = links[-1]
         return False if last_link.tag == 'a' else True
 
