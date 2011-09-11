@@ -1,7 +1,6 @@
 
 import logging
 from urlparse import urlparse, ParseResult
-from allergy_assistant import db
 
 class RecipeWebsiteScraper(object):
 
@@ -23,12 +22,7 @@ class RecipeWebsiteScraper(object):
        return " ".join(filter(lambda i: not i.isspace(), string.split()))
 
 
-    def save(self, recipe):
-        doc = recipe.format_mongo_doc()
-        update_spec = {'_id': doc['_id']}
-        db.recipes.update(update_spec, doc, upsert=True)
-
-    def get_recipe_list(self):
+    def get_recipes(self):
         """override me"""
         raise NotImplementedError("Override me!")
 
@@ -37,7 +31,7 @@ class RecipeWebsiteScraper(object):
         raise NotImplementedError("Override me!")
     
     def get_all_recipes(self):
-        for recipe in self.get_recipe_list():
+        for recipe in self.get_recipes():
             try:
                 self.parse_recipe(recipe) 
                 yield recipe
@@ -47,7 +41,7 @@ class RecipeWebsiteScraper(object):
     def get_and_save_all(self):
         if getattr(self, 'ENABLED', False):
             for recipe in self.get_all_recipes():
-                self.save(recipe)
+                recipe.save()
 
     @classmethod
     def get_and_save_all_sources(cls):

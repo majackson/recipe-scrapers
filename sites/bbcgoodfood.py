@@ -16,9 +16,9 @@ class BbcGoodFood(RecipeWebsiteScraper):
     SOURCE_NAME = "BBC Good Food" 
     SOURCE_URL = "http://www.bbcgoodfood.com"
 
-    def get_recipe_list(self):
+    def get_recipes(self):
         """Gets a full list of recipes for this source
-        Returns a list of recipes in the format (recipe, recipe_url) """
+        Returns a list of ScraperRecipes"""
         root_url = "http://www.bbcgoodfood.com/"
         recipe_list_url = root_url + "searchAZ.do"
         
@@ -29,7 +29,7 @@ class BbcGoodFood(RecipeWebsiteScraper):
             Returns a list of ScaperRecipes in the format (recipe_name, relative_recipe_url)"""
             for recipe_link in page_root.cssselect('#currentLetterList li h4 a'):
                     #yield (recipe_link.text_content().strip(), recipe_link.attrib.get('href'))
-                    recipe_name = recipe_link.text_content.strip()
+                    recipe_name = recipe_link.text_content().strip()
                     recipe_url = recipe_link.attrib.get('href')
                     yield ScraperRecipe(recipe_name, source=self.SOURCE_NAME, \
                             url=recipe_url)

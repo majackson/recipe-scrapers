@@ -1,14 +1,7 @@
-#from nltk.corpus import wordnet
+from allergy_assistant import db
 
 class ScraperModel():
-
     name_fields = []
-
-#    @staticmethod
-#    def is_adjective_and_not_noun(word):
-#        defs = wordnet.synsets(word)
-#        word_is = lambda ss, wt: any(s.lexname.startswith(wt) for s in ss)
-#        return not (word_is(defs, 'noun') or not word_is(defs, 'adj'))
 
     @staticmethod
     def parse_name(name):
@@ -24,7 +17,6 @@ class ScraperModel():
         name = name.lower() #for processing
 
         words = name.split()
-        #words = filter(lambda w: not is_adjective_and_not_noun(w), words)
         words = filter(lambda w: len(w) > 1, words)
         words = filter(lambda w: not w.isdigit(), words)
         #words = filter(lambda w: w not in PREPOSITIONS, words)
@@ -57,7 +49,12 @@ class ScraperRecipe(ScraperModel):
         self.url = url
         self.ingredients = []
 
-    def format_mongo_doc(self):
+    def save(self):
+        doc = self._format_mongo_doc()
+        update_spec = {'_id': doc['_id']}
+        db.recipes.update(update_spec, doc, upsert=True)
+
+    def _format_mongo_doc(self):
         doc = {'_id': self.url,
                 'source': self.source,
                 'url': self.url,
