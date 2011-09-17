@@ -28,7 +28,6 @@ class BbcGoodFood(RecipeWebsiteScraper):
             
             Returns a list of ScaperRecipes in the format (recipe_name, relative_recipe_url)"""
             for recipe_link in page_root.cssselect('#currentLetterList li h4 a'):
-                    #yield (recipe_link.text_content().strip(), recipe_link.attrib.get('href'))
                     recipe_name = recipe_link.text_content().strip()
                     recipe_url = recipe_link.attrib.get('href')
                     yield ScraperRecipe(recipe_name, source=self.SOURCE_NAME, \

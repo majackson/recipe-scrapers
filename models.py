@@ -57,14 +57,12 @@ class ScraperRecipe(ScraperModel):
         db.recipes.update(update_spec, doc, upsert=True)
 
     def _format_mongo_doc(self):
-        remove_punc = lambda s: s.translate(" "*256, string.punctuation)
-
         doc = {'_id': self.url,
                 'source': self.source,
                 'url': self.url,
                 'recipe_name': self.recipe_name,
                 'ingredients': [ i.ingredient_name for i in self.ingredients ],
-                'keywords': remove_punc(self.recipe_name).split(),
+                'keywords': self.recipe_name.split(),
             }
         return doc
 
