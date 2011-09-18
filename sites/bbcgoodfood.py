@@ -82,7 +82,9 @@ class BbcGoodFood(RecipeWebsiteScraper):
        
         return recipe 
 
-
-if __name__ == '__main__':
+def main():
     bbcgoodfood = BbcGoodFood()
     bbcgoodfood.get_and_save_all()
+    
+if __name__ == '__main__':
+    main()
