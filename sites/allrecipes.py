@@ -25,13 +25,14 @@ class AllRecipes(RecipeWebsiteScraper):
         for page_num in xrange(1, sys.maxint):
             list_page_url = "%s?Page=%d" % (recipe_list_url, page_num)
             logger.debug("---Beginning to parse page %d" % page_num) 
-            page = html.parse(list_page_url).getroot()
-            for recipe in self.get_recipes_from_page(page):
-                logger.debug("found %s at %s" % (recipe.recipe_name, recipe.url) )
-                yield recipe
+            page = self.parse(list_page_url)
+            if page is not None:
+                for recipe in self.get_recipes_from_page(page):
+                    logger.debug("found %s at %s" % (recipe.recipe_name, recipe.url) )
+                    yield recipe
 
-            if self.is_last_page(page):
-                break
+                if self.is_last_page(page):
+                    break
 
     def is_last_page(self, page):
         """Determines whether this page is the last page of recipes"""
@@ -43,7 +44,7 @@ class AllRecipes(RecipeWebsiteScraper):
         for recipe_row in page.cssselect('.rectable h3 a'):
             recipe_name = recipe_row.text_content()
             recipe_url = recipe_row.get('href')
-            recipe = ScraperRecipe(recipe_name, source=self.SOURCE_URL, url=recipe_url)
+            recipe = ScraperRecipe(recipe_name, source=self.SOURCE_NAME, url=recipe_url)
             yield recipe
 
     def parse_recipe(self, recipe):
@@ -53,14 +54,9 @@ class AllRecipes(RecipeWebsiteScraper):
                ingredient = self.remove_extraneous_whitespace(ingredient.text_content())
                yield ScraperIngredient(ingredient)
        
-        page = html.parse(recipe.url).getroot() #on rare occasions this times out!
-        #weird workaround to catch 99.9% of times this happens:
-        if page is None:
-            page = html.parse(recipe.url).getroot()
-
-        if page is None: #on the uber-rare occasions it *still doesn't exist*, 
-            raise IOError # throw exception and let caller handle it
-
+        page = self.parse(recipe.url)
+        if page is None: return None
+        
         if not recipe.recipe_name:
             recipe.recipe_name = page.cssselect('.itemreviewed')[0].text_content().strip()
         recipe.source_name = self.SOURCE_NAME
@@ -70,6 +66,9 @@ class AllRecipes(RecipeWebsiteScraper):
        
         return recipe 
 
-if __name__ == '__main__':
+def main():
     allrecipes = AllRecipes()
     allrecipes.get_and_save_all()
+
+if __name__ == '__main__':
+    main()

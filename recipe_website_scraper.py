@@ -1,5 +1,5 @@
-
 import logging
+from lxml import html
 from urlparse import urlparse, ParseResult
 
 class RecipeWebsiteScraper(object):
@@ -29,7 +29,14 @@ class RecipeWebsiteScraper(object):
     def parse_recipe(self):
         """override me"""
         raise NotImplementedError("Override me!")
-    
+
+    def parse(self, url):
+        try:    
+            page = html.parse(url).getroot()
+        except IOError:
+            page = None
+        return page
+
     def get_all_recipes(self):
         for recipe in self.get_recipes():
             try:
