@@ -39,7 +39,7 @@ class FoodCom(RecipeWebsiteScraper):
                     recipe = self.parse_recipe(recipe)
                     if recipe is None:
                         next
-                    else: return recipe
+                    else: yield recipe
 
                 if self.is_last_page_of_letter(page): break
 
@@ -55,7 +55,7 @@ class FoodCom(RecipeWebsiteScraper):
         """Receives a recipe object containing only name source and url
         Returns same object populated with ingredients"""
         page = self.parse(recipe.url)
-        if page: return None
+        if page is None: return None
 
         ingredients = page.cssselect('.ingredients .ingredient .name')
         for ingredient in ingredients:
