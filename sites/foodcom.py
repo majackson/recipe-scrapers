@@ -17,12 +17,16 @@ class FoodCom(RecipeWebsiteScraper):
     SOURCE_NAME = "Food.com" 
     SOURCE_URL = "http://www.food.com"
 
-    def get_recipes(self):
+    def get_recipes(self, start_point=None):
         """Gets a full list of recipes for this source
         Returns a list of ScraperRecipes"""
         recipe_list_url = self.SOURCE_URL + "/browse/allrecipes/"
 
-        letters = ['123'] + [ chr(n) for n in range(65,91) ]
+        if start_point is None:
+            letters = ['123'] + [ chr(n) for n in range(65,91) ]
+        else:
+            letters = [start_point]
+
         for letter in letters:
             logger.debug("---Beginning to parse letter %s" % letter) 
             for p in xrange(1, sys.maxint):
@@ -65,8 +69,9 @@ class FoodCom(RecipeWebsiteScraper):
         return recipe 
 
 def main():
+    letter = sys.argv[1]
     foodcom = FoodCom()
-    foodcom.get_and_save_all()
+    foodcom.get_and_save_all(letter)
 
 if __name__ == '__main__':
     main()

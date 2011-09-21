@@ -37,17 +37,17 @@ class RecipeWebsiteScraper(object):
             page = None
         return page
 
-    def get_all_recipes(self):
-        for recipe in self.get_recipes():
+    def get_all_recipes(self, start_point=None):
+        for recipe in self.get_recipes(start_point):
             try:
                 self.parse_recipe(recipe) 
                 yield recipe
             except IOError:
                 continue
 
-    def get_and_save_all(self):
+    def get_and_save_all(self, start_point=None):
         if getattr(self, 'ENABLED', False):
-            for recipe in self.get_all_recipes():
+            for recipe in self.get_all_recipes(start_point):
                 recipe.save()
 
     @classmethod

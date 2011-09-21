@@ -16,7 +16,7 @@ class BbcGoodFood(RecipeWebsiteScraper):
     SOURCE_NAME = "BBC Good Food" 
     SOURCE_URL = "http://www.bbcgoodfood.com"
 
-    def get_recipes(self):
+    def get_recipes(self, start_point=None):
         """Gets a full list of recipes for this source
         Returns a list of ScraperRecipes"""
         root_url = "http://www.bbcgoodfood.com/"
@@ -33,9 +33,12 @@ class BbcGoodFood(RecipeWebsiteScraper):
                     yield ScraperRecipe(recipe_name, source=self.SOURCE_NAME, \
                             url=recipe_url)
 
-        start_letter_code = 97
-        for letter_code in range(start_letter_code, start_letter_code+26):       
-            letter = chr(letter_code)
+        if start_point is None:
+            letters = [ chr(x) for x in range(97, 97+26) ]
+        else:
+            letters = [start_point]
+
+        for letter in letters:       
             logger.debug("---Beginning to parse letter %s" % letter) 
             page = html.parse(recipe_list_url + "?letter=%s" % letter).getroot()
             pagecount = 1
