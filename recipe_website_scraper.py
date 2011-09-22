@@ -1,8 +1,12 @@
 import logging
 from lxml import html
 from urlparse import urlparse, ParseResult
+import argparse
 
 class RecipeWebsiteScraper(object):
+
+    def __init__(self):
+        raise NotImplementedError("Abstract class, do not instatiate!")
 
     def relative_to_absolute(self, start_path, relative_url):
         """converts a relative url at a specified (absolute) location

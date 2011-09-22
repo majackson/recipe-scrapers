@@ -66,6 +66,10 @@ class ScraperRecipe(ScraperModel):
             }
         return doc
 
+    @staticmethod
+    def recipe_in_db(url):
+        return bool(db.recipes.find({'_id': url}))
+
     def add_ingredient(self, scraper_ingredient):
         """Adds a single ingredient to the list of ingredients"""
         self.ingredients.append(scraper_ingredient)

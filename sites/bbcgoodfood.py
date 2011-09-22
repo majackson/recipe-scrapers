@@ -16,6 +16,9 @@ class BbcGoodFood(RecipeWebsiteScraper):
     SOURCE_NAME = "BBC Good Food" 
     SOURCE_URL = "http://www.bbcgoodfood.com"
 
+    def __init__(self):
+	pass # must override superclass
+
     def get_recipes(self, start_point=None):
         """Gets a full list of recipes for this source
         Returns a list of ScraperRecipes"""
