@@ -44,11 +44,11 @@ class FoodCom(RecipeWebsiteScraper):
                     recipe_url = recipe_link.get('href')
                     logger.debug("Found %s" % (recipe_name)) 
                     if self.refresh or not ScraperRecipe.recipe_in_db(recipe_url):
-		        recipe = ScraperRecipe(recipe_name, self.SOURCE_NAME, url=recipe_url)
-		        recipe = self.parse_recipe(recipe)
-		        if recipe is None:
-		            next
-	                else: yield recipe
+                        recipe = ScraperRecipe(recipe_name, self.SOURCE_NAME, url=recipe_url)
+                        recipe = self.parse_recipe(recipe)
+                        if recipe is None:
+                            next
+                        else: yield recipe
                     else:
                         logger.debug("Already in db, skipping...") 
                         
