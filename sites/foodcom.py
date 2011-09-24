@@ -82,7 +82,6 @@ def main():
     parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
 
     args = parser.parse_args()
-    if args.start_point is not None: args.all = False
 
     foodcom = FoodCom(refresh=args.refresh)
     foodcom.get_and_save_all(args.start_point)

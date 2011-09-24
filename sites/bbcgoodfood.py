@@ -3,6 +3,7 @@ from urlparse import urlparse, ParseResult
 from allergy_assistant.scrapers import RecipeWebsiteScraper
 from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
 import logging
+import argparse
 
 logger = logging.getLogger("allergy_assistant.scrapers.sites.bbcgoodfood")
 logger.setLevel(logging.DEBUG)
@@ -16,8 +17,8 @@ class BbcGoodFood(RecipeWebsiteScraper):
     SOURCE_NAME = "BBC Good Food" 
     SOURCE_URL = "http://www.bbcgoodfood.com"
 
-    def __init__(self):
-	pass # must override superclass
+    def __init__(self, refresh=False):
+        self.refresh = refresh
 
     def get_recipes(self, start_point=None):
         """Gets a full list of recipes for this source
@@ -50,7 +51,10 @@ class BbcGoodFood(RecipeWebsiteScraper):
                 for scraper_recipe in get_recipes_on_page(page):
                     scraper_recipe.url = self.relative_to_absolute(root_url, scraper_recipe.url) 
                     logger.debug("found %s at %s" % (scraper_recipe.recipe_name, scraper_recipe.url) )
-                    yield scraper_recipe
+                    if self.refresh or not ScraperRecipe.recipe_in_db(scraper_recipe.url):
+                        yield scraper_recipe
+                    else:
+                        logger.debug("Recipe already in database, skipping")
                 pages_links = page.cssselect('#pagesNavTop ul li a')
                 if pages_links and pages_links[-1].text_content().strip().lower() == 'next':
                     page = html.parse(root_url + pages_links[-1].attrib.get('href')).getroot()  
@@ -89,8 +93,14 @@ class BbcGoodFood(RecipeWebsiteScraper):
         return recipe 
 
 def main():
-    bbcgoodfood = BbcGoodFood()
-    bbcgoodfood.get_and_save_all()
+    parser = argparse.ArgumentParser(description="Parse recipes stored at Food.com")
+    parser.add_argument('--refresh', dest='refresh', action='store_true', default=False, help="Reparse urls already in database")
+    parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
+
+    args = parser.parse_args()
+
+    bbcgoodfood = BbcGoodFood(refresh=args.refresh)
+    bbcgoodfood.get_and_save_all(start_point=args.start_point)
     
 if __name__ == '__main__':
     main()

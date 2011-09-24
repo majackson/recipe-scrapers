@@ -4,6 +4,7 @@ from urlparse import urlparse, ParseResult
 from allergy_assistant.scrapers import RecipeWebsiteScraper
 from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
 import logging
+import argparse
 
 logger = logging.getLogger("allergy_assistant.scrapers.sites.allrecipes")
 logger.setLevel(logging.DEBUG)
@@ -17,22 +18,30 @@ class AllRecipes(RecipeWebsiteScraper):
     SOURCE_NAME = "All Recipes" 
     SOURCE_URL = "http://allrecipes.com"
 
-    def __init__(self):
-	pass # must override superclass
+    def __init__(self, refresh=None):
+        self.refresh = refresh
 
     def get_recipes(self, start_point=None):
         """Gets a full list of recipes for this source
         Returns a list of ScraperRecipes"""
         recipe_list_url = self.SOURCE_URL + "/recipes/ViewAll.aspx"
 
-        for page_num in xrange(1, sys.maxint):
+        if start_point:
+            page_numbers = [start_point]
+        else:
+            page_numbers = xrange(1, sys.maxint)
+
+        for page_num in page_numbers:
             list_page_url = "%s?Page=%d" % (recipe_list_url, page_num)
             logger.debug("---Beginning to parse page %d" % page_num) 
             page = self.parse(list_page_url)
             if page is not None:
                 for recipe in self.get_recipes_from_page(page):
                     logger.debug("found %s at %s" % (recipe.recipe_name, recipe.url) )
-                    yield recipe
+                    if self.refresh or not ScraperRecipe.recipe_in_db(recipe.url):
+                        yield recipe
+                    else:
+                        logger.debug("Recipe already in database, skipping...")
 
                 if self.is_last_page(page):
                     break
@@ -70,8 +79,14 @@ class AllRecipes(RecipeWebsiteScraper):
         return recipe 
 
 def main():
-    allrecipes = AllRecipes()
-    allrecipes.get_and_save_all()
+    parser = argparse.ArgumentParser(description="Parse recipes stored at AllRecipes.com")
+    parser.add_argument('--refresh', dest='refresh', action='store_true', default=False, help="Reparse urls already in database")
+    parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
+
+    args = parser.parse_args()
+
+    allrecipes = AllRecipes(refresh=args.refresh)
+    allrecipes.get_and_save_all(start_point=args.start_point)
 
 if __name__ == '__main__':
     main()
