@@ -62,13 +62,17 @@ class ScraperRecipe(ScraperModel):
                 'url': self.url,
                 'recipe_name': self.recipe_name,
                 'ingredients': [ i.ingredient_name for i in self.ingredients ],
-                'keywords': self.recipe_name.split(),
+                'keywords': [ self._remove_punctuation(word).lower() for word in self.recipe_name.split()],
             }
         return doc
 
+    def _remove_punctuation(self, punc_string):
+        return ''.join(ch for ch in punc_string if ch not in set(string.punctuation))
+
+
     @staticmethod
     def recipe_in_db(url):
-        return bool(db.recipes.find({'_id': url}))
+        return bool(db.recipes.find({'_id': url}).count())
 
     def add_ingredient(self, scraper_ingredient):
         """Adds a single ingredient to the list of ingredients"""
