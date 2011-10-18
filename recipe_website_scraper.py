@@ -98,6 +98,9 @@ class RecipeWebsiteScraper(object):
         if getattr(self, 'ENABLED', False):
             for recipe in self.get_all_recipes(start_point):
                 recipe.save()
+            db.recipes.ensure_index('recipe_name')
+            db.recipes.ensure_index('keywords')
+
 
     @classmethod
     def get_and_save_all_sources(cls):
