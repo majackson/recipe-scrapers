@@ -4,6 +4,7 @@ from urlparse import urlparse, ParseResult
 import argparse
 
 from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
+from allergy_assistant import db
 
 class RecipeWebsiteScraper(object):
 
@@ -98,8 +99,7 @@ class RecipeWebsiteScraper(object):
         if getattr(self, 'ENABLED', False):
             for recipe in self.get_all_recipes(start_point):
                 recipe.save()
-            db.recipes.ensure_index('recipe_name')
-            db.recipes.ensure_index('keywords')
+            db.ensure_indexes()
 
 
     @classmethod
