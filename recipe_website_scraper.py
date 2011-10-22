@@ -1,10 +1,8 @@
-import logging
 from lxml import html
 from urlparse import urlparse, ParseResult
-import argparse
 
 from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
-from allergy_assistant import db
+from allergy_assistant import db, logger
 
 class RecipeWebsiteScraper(object):
 
@@ -16,11 +14,8 @@ class RecipeWebsiteScraper(object):
         self.init_logging()
 
     def init_logging(self):
-        self.logger = logging.getLogger("allergy_assistant.scrapers.sites.%s" % ("".join(self.SOURCE_NAME.split()).lower()))
-        self.logger.setLevel(logging.DEBUG)
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
-        self.logger.addHandler(ch)
+        
+        self.logger = logger.init("allergy_assistant.scrapers.sites.%s") % ("".join(self.SOURCE_NAME.split()).lower())
 
     def relative_to_absolute(self, start_path, relative_url):
         """converts a relative url at a specified (absolute) location

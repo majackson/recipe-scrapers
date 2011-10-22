@@ -2,7 +2,6 @@ from lxml import html
 from urlparse import urlparse, ParseResult
 from allergy_assistant.scrapers import RecipeWebsiteScraper
 from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
-import logging
 import argparse
 import sys
 

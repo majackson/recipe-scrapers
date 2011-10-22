@@ -2,14 +2,10 @@ from lxml import html
 from urlparse import urlparse, ParseResult
 from allergy_assistant.scrapers import RecipeWebsiteScraper
 from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
-import logging
 import argparse
+from allergy_assistant import logger
 
-logger = logging.getLogger("allergy_assistant.scrapers.sites.bbcgoodfood")
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-logger.addHandler(ch)
+logger = logger.init("allergy_assistant.scrapers.sites.bbcgoodfood")
 
 class BbcGoodFood(RecipeWebsiteScraper):
 
