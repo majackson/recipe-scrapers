@@ -1,11 +1,11 @@
 from lxml import html
-from urlparse import urlparse, ParseResult
-from allergy_assistant.scrapers import RecipeWebsiteScraper
-from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
 import argparse
-from allergy_assistant import logger
 
-logger = logger.init("allergy_assistant.scrapers.sites.bbcgoodfood")
+from recipe_scrapers.utils import logger
+from recipe_scrapers.scraper import RecipeWebsiteScraper
+from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
+
+logger = logger.init("recipe_scrapers.sites.bbcgoodfood")
 
 class BbcGoodFood(RecipeWebsiteScraper):
 

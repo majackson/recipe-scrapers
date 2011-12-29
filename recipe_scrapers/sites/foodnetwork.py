@@ -1,13 +1,11 @@
-from lxml import html
-from urlparse import urlparse, ParseResult
-from allergy_assistant.scrapers import RecipeWebsiteScraper
-from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
 import argparse
 import sys
-import re
-from allergy_assistant import logger
 
-logger = logger.init("allergy_assistant.scrapers.sites.foodnetwork")
+from recipe_scrapers.scraper import RecipeWebsiteScraper
+from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
+from recipe_scrapers.utils import logger
+
+logger = logger.init("recipe_scrapers.sites.foodnetwork")
 
 class FoodNetwork(RecipeWebsiteScraper):
 

@@ -1,26 +1,27 @@
-from allergy_assistant.parsers import RecipeWebsiteParser 
 import unittest
 
-class RecipeWebsiteParserTest(unittest.TestCase):
+from recipe_scrapers.scraper import RecipeWebsiteScraper
+
+class RecipeWebsiteScraperTest(unittest.TestCase):
     
     def setUp(self):
-        self.rwp = RecipeWebsiteParser() 
+        self.rws = RecipeWebsiteScraper() 
 
     def test_relative_to_absolute(self):
         
         absurl1 = "http://www.google.com"
         relurl1 = "/chrome"
-        self.assertEqual( self.rwp.relative_to_absolute(absurl1, relurl1), \
+        self.assertEqual( self.rws.relative_to_absolute(absurl1, relurl1), \
                 "http://www.google.com/chrome")
 
         absurl2 = "http://www.reddit.com/r/programming/"
         relurl2 = "comments/f2rei/"
-        self.assertEqual( self.rwp.relative_to_absolute(absurl2, relurl2), \
+        self.assertEqual( self.rws.relative_to_absolute(absurl2, relurl2), \
                 "http://www.reddit.com/r/programming/comments/f2rei/")
 
         absurl3 = "http://someurl.net/a/path"
         relurl3 = "different/path"
-        self.assertEqual( self.rwp.relative_to_absolute(absurl3, relurl3), \
+        self.assertEqual( self.rws.relative_to_absolute(absurl3, relurl3), \
                 "http://someurl.net/a/different/path")
 
     def test_postparse_save(self):
@@ -28,7 +29,7 @@ class RecipeWebsiteParserTest(unittest.TestCase):
             ['fresh raw chicken', 'yellow lemon', 'bunch of rosemary', '4 garlic cloves'],
             'some source')
 
-        result = self.rwp.postparse(test_recipe)
+        result = self.rws.postparse(test_recipe)
 
         self.assertEqual(result, \
             ('chicken with garlic',

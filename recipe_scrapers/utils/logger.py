@@ -1,6 +1,5 @@
 import logging
 import os
-from datetime import datetime
 
 from allergy_assistant import settings, db
 
