@@ -1,4 +1,4 @@
-from allergy_assistant import settings
+from recipe_scrapers import settings
 from pymongo import Connection
 
 conn = Connection(settings.MONGO_IP)

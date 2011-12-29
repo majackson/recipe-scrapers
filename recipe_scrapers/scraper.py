@@ -1,8 +1,8 @@
 from lxml import html
 from urlparse import urlparse, ParseResult
 
-from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
-from allergy_assistant import db, logger
+from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
+from recipe_scrapers import db, logger
 
 class RecipeWebsiteScraper(object):
 

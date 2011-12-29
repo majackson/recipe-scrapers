@@ -1,8 +1,8 @@
 """As more processing is done for each recipe, this script can be run to
 reprocess all recipes already stored. Processing defined in scrapers/models.py"""
 
-from allergy_assistant import db
-from allergy_assistant.scrapers.models import ScraperRecipe, ScraperIngredient
+from recipe_scrapers import db
+from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
 
 def reprocess_recipe(recipe):
     recipe_model = ScraperRecipe(recipe['recipe_name'])

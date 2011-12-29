@@ -1,6 +1,6 @@
 import string
 
-from allergy_assistant import db
+from recipe_scrapers import db
 
 class ScraperModel():
     name_fields = []
@@ -52,9 +52,14 @@ class ScraperRecipe(ScraperModel):
         self.ingredients = []
 
     def save(self):
+        # TODO allow for multiple db types
+        self._mongo_save()
+
+    def _mongo_save(self):
         doc = self._format_mongo_doc()
         update_spec = {'_id': doc['_id']}
         db.recipes.update(update_spec, doc, upsert=True)
+        
 
     def _format_mongo_doc(self):
         doc = {'_id': self.url,

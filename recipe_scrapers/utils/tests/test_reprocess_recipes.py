@@ -1,7 +1,7 @@
 import unittest
 
-from allergy_assistant import settings, db
-from allergy_assistant.utils import reprocess_recipes
+from recipe_scrapers import settings, db
+from recipe_scrapers.utils import reprocess_recipes
 
 class TestReprocessRecipes(unittest.TestCase):
 
