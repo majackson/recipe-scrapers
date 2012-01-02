@@ -1,4 +1,3 @@
-import argparse
 import sys
 
 from recipe_scrapers.scraper import RecipeWebsiteScraper
@@ -35,10 +34,7 @@ class FoodChannel(RecipeWebsiteScraper):
         return False if next_button.tag == 'a' else True
 
 def main():
-    parser = argparse.ArgumentParser(description="Parse recipes stored at foodchannel.com")
-    parser.add_argument('--refresh', dest='refresh', action='store_true', default=False, help="Reparse urls already in database")
-    parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
-
+    parser = FoodChannel.get_argparser()
     args = parser.parse_args()
 
     foodchannel = FoodChannel(refresh=args.refresh)

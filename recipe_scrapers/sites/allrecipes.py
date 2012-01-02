@@ -2,7 +2,7 @@ import sys
 
 from recipe_scrapers.scraper import RecipeWebsiteScraper
 from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
-from recipe_scrapers import logger
+from recipe_scrapers.utils import logger
 
 logger = logger.init("recipe_scrapers.sites.allrecipes")
 
@@ -73,10 +73,7 @@ class AllRecipes(RecipeWebsiteScraper):
         return recipe 
 
 def main():
-    parser = argparse.ArgumentParser(description="Parse recipes stored at AllRecipes.com")
-    parser.add_argument('--refresh', dest='refresh', action='store_true', default=False, help="Reparse urls already in database")
-    parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
-
+    parser = AllRecipes.get_argparser()
     args = parser.parse_args()
 
     allrecipes = AllRecipes(refresh=args.refresh)

@@ -1,5 +1,3 @@
-import argparse
-
 from recipe_scrapers.scraper import RecipeWebsiteScraper
 from recipe_scrapers.models import ScraperIngredient
 from recipe_scrapers.utils import logger
@@ -46,10 +44,7 @@ class Epicurious(RecipeWebsiteScraper):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Parse recipes stored at Food.com")
-    parser.add_argument('--refresh', dest='refresh', action='store_true', default=False, help="Reparse urls already in database")
-    parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
-
+    parser = Epicurious.get_argparser()
     args = parser.parse_args()
 
     epicurious = Epicurious(refresh=args.refresh)
