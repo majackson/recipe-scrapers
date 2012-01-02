@@ -1,7 +1,7 @@
 import logging
 import os
 
-from allergy_assistant import settings, db
+from recipe_scrapers import settings
 
 def init(logger_name):
     logger = logging.getLogger(logger_name)
@@ -19,14 +19,3 @@ def init(logger_name):
     logger.addHandler(fh)
 
     return logger
-
-def log_request(request, response):
-
-    request_dict = {}
-
-    request_dict['request_time'] = request.request_time()
-    request_dict['url'] = request.uri
-    request_dict['args'] = request.arguments
-    request_dict['headers'] = request.headers
-
-    db.requests.insert({'request': request_dict, 'response': response})
