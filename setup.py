@@ -20,13 +20,13 @@ setup(
     install_requires=['lxml', 'pymongo', 'argparse'],
     entry_points={
         'console_scripts': [
-            'foodcom-scraper = allergy_assistant.scrapers.sites.foodcom:main',
-            'bbcgoodfood-scraper = allergy_assistant.scrapers.sites.bbcgoodfood:main',
-            'allrecipes-scraper = allergy_assistant.scrapers.sites.allrecipes:main',
-            'foodnetwork-scraper = allergy_assistant.scrapers.sites.foodnetwork:main',
-            'epicurious-scraper = allergy_assistant.scrapers.sites.epicurious:main',
-            'foodchannel-scraper = allergy_assistnt.scrapers.sites.foodchannel:main',
-            'reprocess-recipes = allergy_assistant.utils.reprocess_recipes:run',
+            'foodcom-scraper = recipe_scrapers.sites.foodcom:main',
+            'bbcgoodfood-scraper = recipe_scrapers.sites.bbcgoodfood:main',
+            'allrecipes-scraper = recipe_scrapers.sites.allrecipes:main',
+            'foodnetwork-scraper = recipe_scrapers.sites.foodnetwork:main',
+            'epicurious-scraper = recipe_scrapers.sites.epicurious:main',
+            'foodchannel-scraper = recipe_scrapers.sites.foodchannel:main',
+            'reprocess-recipes = recipe_scrapers.utils.reprocess_recipes:run',
         ]
     },
     classifiers=[
