@@ -1,8 +1,10 @@
 from lxml import html
 from urlparse import urlparse, ParseResult
+import argparse
 
 from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
-from recipe_scrapers import db, logger
+from recipe_scrapers import db
+from recipe_scrapers.utils import logger
 
 class RecipeWebsiteScraper(object):
 
@@ -15,7 +17,7 @@ class RecipeWebsiteScraper(object):
 
     def init_logging(self):
         
-        self.logger = logger.init("allergy_assistant.scrapers.sites.%s") % ("".join(self.SOURCE_NAME.split()).lower())
+        self.logger = logger.init("recipe_scrapers.sites.%s") % ("".join(self.SOURCE_NAME.split()).lower())
 
     def relative_to_absolute(self, start_path, relative_url):
         """converts a relative url at a specified (absolute) location
@@ -101,4 +103,21 @@ class RecipeWebsiteScraper(object):
     def get_and_save_all_sources(cls):
         for SiteParser in cls.__subclasses__():
             SiteParser().get_and_save_all()
+
+    @classmethod
+    def get_argparser(klass):
+        parser_desc = "Parse recipes stored at %s" % klass.SOURCE_NAME
+        parser = argparse.ArgumentParser(description=parser_desc)
+        parser.add_argument('--refresh', 
+                            dest='refresh', 
+                            action='store_true', 
+                            default=False, 
+                            help="Reparse urls already in database")
+
+        parser.add_argument('--start-point', 
+                            dest='start_point',
+                            default=None, 
+                            help="Specify a letter or number to start parsing at")
+
+        return parser
 

@@ -1,5 +1,4 @@
 from lxml import html
-import argparse
 
 from recipe_scrapers.utils import logger
 from recipe_scrapers.scraper import RecipeWebsiteScraper
@@ -89,10 +88,7 @@ class BbcGoodFood(RecipeWebsiteScraper):
         return recipe 
 
 def main():
-    parser = argparse.ArgumentParser(description="Parse recipes stored at BBC Good Food")
-    parser.add_argument('--refresh', dest='refresh', action='store_true', default=False, help="Reparse urls already in database")
-    parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
-
+    parser = BbcGoodFood.get_argparser()
     args = parser.parse_args()
 
     bbcgoodfood = BbcGoodFood(refresh=args.refresh)

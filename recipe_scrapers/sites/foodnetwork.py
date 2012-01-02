@@ -1,4 +1,4 @@
-import argparse
+
 import sys
 
 from recipe_scrapers.scraper import RecipeWebsiteScraper
@@ -79,10 +79,7 @@ class FoodNetwork(RecipeWebsiteScraper):
         return recipe_name.split(' (')[0]
 
 def main():
-    parser = argparse.ArgumentParser(description="Parse recipes stored at Food.com")
-    parser.add_argument('--refresh', dest='refresh', action='store_true', default=False, help="Reparse urls already in database")
-    parser.add_argument('--start-point', dest='start_point', default=None, help="Specify a letter or number to start parsing at")
-
+    parser = FoodNetwork.get_argparser()
     args = parser.parse_args()
 
     foodnetwork = FoodNetwork(refresh=args.refresh)
