@@ -2,7 +2,7 @@ from recipe_scrapers import settings
 from pymongo import Connection
 
 conn = Connection(settings.MONGO_IP)
-db = conn[settings.ALLERGY_ASSISTANT_DB]
+db = conn[settings.RECIPE_DB]
 
 recipes = db[settings.RECIPE_COLLECTION] 
 dish = db[settings.DISH_COLLECTION]
