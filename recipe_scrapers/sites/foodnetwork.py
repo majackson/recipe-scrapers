@@ -2,7 +2,6 @@
 import sys
 
 from recipe_scrapers.scraper import RecipeWebsiteScraper
-from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
 from recipe_scrapers.utils import logger
 
 logger = logger.init("recipe_scrapers.sites.foodnetwork")
@@ -12,44 +11,26 @@ class FoodNetwork(RecipeWebsiteScraper):
     ENABLED = True
     SOURCE_NAME = "Food Network" 
     SOURCE_URL = "http://www.foodnetwork.com"
+    
+    RELATIVE_URLS = True
 
-    def __init__(self, refresh):
-	self.refresh = refresh
+    RECIPE_LINK_SELECTOR = '.idxlist li a'
+    INGREDIENTS_SELECTOR = '.kv-ingred-list1 .ingredient'
 
-    def get_recipes(self, start_point=None):
-        """Gets a full list of recipes for this source
-        Returns a list of ScraperRecipes"""
-        recipe_list_url = self.SOURCE_URL + "/food/about_us/index/0,1000854,FOOD_32959_93219_%s-%d,00.html"
-
-        if start_point is None:
-            letters = [''] + [ chr(n) for n in range(65,91) ]
-        else:
+    def get_recipe_list_urls(self, start_point=None):
+        recipe_list_url_spec = "%s/food/about_us/index/0,1000854,FOOD_32959_93219_%s-%d,00.html"
+        if start_point:
             letters = [start_point]
+        else:
+            letters = [''] + map(chr, range(ord('A'),ord('A')+26))
 
         for letter in letters:
-            logger.debug("---Beginning to parse letter %s" % letter) 
-            for p in xrange(1, sys.maxint):
-                logger.debug("-----Parsing page %d of '%s'" % (p, letter)) 
-                recipe_page = recipe_list_url % (letter, p)
-                page = self.parse(recipe_page)
-                if page is None: next
+            page_numbers = xrange(1, sys.maxint)
+            for page_number in page_numbers:
+                yield recipe_list_url_spec % (self.SOURCE_URL, letter, page_number)
+                if self.is_last_page_of_letter():
+                    break
 
-                for recipe_link in page.cssselect('.idxlist li a'):
-                    recipe_name = recipe_link.text_content().strip()
-                    recipe_name = self.remove_parens_name(recipe_name)
-                    recipe_url = self.relative_to_absolute(self.SOURCE_URL, recipe_link.get('href'))
-                    logger.debug("Found %s" % (recipe_name)) 
-                    if self.refresh or not ScraperRecipe.recipe_in_db(recipe_url):
-                        recipe = ScraperRecipe(recipe_name, self.SOURCE_NAME, url=recipe_url)
-                        recipe = self.parse_recipe(recipe)
-                        if recipe is None:
-                            next
-                        else: yield recipe
-                    else:
-                        logger.debug("Already in db, skipping...") 
-                        
-
-                if self.is_last_page_of_letter(page): break
 
     def is_last_page_of_letter(self, page):
         disabled_buttons = page.cssselect('.pglnks .dis span')
@@ -59,18 +40,8 @@ class FoodNetwork(RecipeWebsiteScraper):
         # if nothing else returned by this point...
         return True
         
-    def parse_recipe(self, recipe):
-        """Receives a recipe object containing only name source and url
-        Returns same object populated with ingredients"""
-        page = self.parse(recipe.url)
-        if page is None: return None
-
-        ingredients = page.cssselect('.kv-ingred-list1 .ingredient')
-        for ingredient in ingredients:
-            ingredient = self.remove_extraneous_whitespace(ingredient.text_content())
-            recipe.add_ingredient(ScraperIngredient(ingredient))
-       
-        return recipe 
+    def format_name(self, recipe_name):
+        return self.remove_parens_name(recipe_name)
 
     def remove_parens_name(self, recipe_name):
         """On this site some (maybe 50%) of recipes name the celebrity chef
