@@ -16,8 +16,8 @@ class RecipeWebsiteScraper(object):
         self.init_logging()
 
     def init_logging(self):
-        
-        self.logger = logger.init("recipe_scrapers.sites.%s") % ("".join(self.SOURCE_NAME.split()).lower())
+        self.logger = logger.init("recipe_scrapers.sites.%s" % 
+            ("".join(self.SOURCE_NAME.split()).lower()))
 
     def relative_to_absolute(self, start_path, relative_url):
         """converts a relative url at a specified (absolute) location
@@ -38,9 +38,9 @@ class RecipeWebsiteScraper(object):
         """Gets a full list of recipes for this source
         Returns a list of ScraperRecipes"""
         for recipe_list_url in self.get_recipe_list_urls(start_point):
-            recipe_list_page = self.parse(recipe_list_url)
-            if recipe_list_page:
-                for recipe in self.get_recipes_from_list_page(recipe_list_page):
+            self.list_page = self.parse(recipe_list_url)
+            if self.list_page is not None:
+                for recipe in self.get_recipes_from_list_page(self.list_page):
                     self.logger.debug("found %s at %s" % (recipe.recipe_name, recipe.url) )
                     if self.refresh or not ScraperRecipe.recipe_in_db(recipe.url):
                         yield recipe

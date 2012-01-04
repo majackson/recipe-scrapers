@@ -28,7 +28,7 @@ class FoodNetwork(RecipeWebsiteScraper):
             page_numbers = xrange(1, sys.maxint)
             for page_number in page_numbers:
                 yield recipe_list_url_spec % (self.SOURCE_URL, letter, page_number)
-                if self.is_last_page_of_letter():
+                if self.is_last_page_of_letter(self.list_page):
                     break
 
 
