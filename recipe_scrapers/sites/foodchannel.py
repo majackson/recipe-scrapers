@@ -24,8 +24,8 @@ class FoodChannel(RecipeWebsiteScraper):
         else:
             page_numbers = xrange(1, sys.maxint)
 
-        for recipe_list_url in [ recipe_list_url_spec % (self.SOURCE_URL, x) for x in page_numbers ]:
-            yield recipe_list_url
+        for page_number in page_numbers:
+            yield recipe_list_url_spec % (self.SOURCE_URL, page_number)
             if self.is_last_page():
                 break
 
