@@ -8,7 +8,7 @@ LOG_PATH = '/var/log/recipe_scrapers'
 # Database settings
 MONGO_IP = 'localhost'
 
-RECIPE_DB = 'allergy_assistant'
+RECIPE_DB = 'allergy_assassin'
 
 RECIPE_COLLECTION = 'recipes'
 DISH_COLLECTION = 'dish'
