@@ -1,7 +1,6 @@
 import sys
 
 from recipe_scrapers.scraper import RecipeWebsiteScraper
-from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
 from recipe_scrapers.utils import logger
 
 logger = logger.init("recipe_scrapers.sites.foodcom")
@@ -12,42 +11,24 @@ class FoodCom(RecipeWebsiteScraper):
     SOURCE_NAME = "Food.com" 
     SOURCE_URL = "http://www.food.com"
 
-    def __init__(self, refresh):
-	self.refresh = refresh
+    RELATIVE_URLS = False
 
-    def get_recipes(self, start_point=None):
-        """Gets a full list of recipes for this source
-        Returns a list of ScraperRecipes"""
-        recipe_list_url = self.SOURCE_URL + "/browse/allrecipes/"
+    RECIPE_LINK_SELECTOR = '.bd-full ul.list a'
+    INGREDIENTS_SELECTOR = '.ingredients .ingredient .name'
 
-        if start_point is None:
-            letters = ['123'] + [ chr(n) for n in range(65,91) ]
-        else:
+    def get_recipe_list_urls(self, start_point=None):
+        recipe_list_url_spec = "%s/browse/allrecipes/?letter=%s&pg=%d"
+
+        if start_point:
             letters = [start_point]
+        else:
+            letters = ['123'] + map(chr, range(ord('A'), ord('Z')+1))
 
         for letter in letters:
-            logger.debug("---Beginning to parse letter %s" % letter) 
             for p in xrange(1, sys.maxint):
-                logger.debug("-----Parsing page %d of '%s'" % (p, letter)) 
-                recipe_page = recipe_list_url + "?letter=%s&pg=%d" % (letter, p)
-                page = self.parse(recipe_page)
-                if page is None: next
-
-                for recipe_link in page.cssselect('.bd-full ul.list a'):
-                    recipe_name = recipe_link.text_content().strip()
-                    recipe_url = recipe_link.get('href')
-                    logger.debug("Found %s" % (recipe_name)) 
-                    if self.refresh or not ScraperRecipe.recipe_in_db(recipe_url):
-                        recipe = ScraperRecipe(recipe_name, self.SOURCE_NAME, url=recipe_url)
-                        recipe = self.parse_recipe(recipe)
-                        if recipe is None:
-                            next
-                        else: yield recipe
-                    else:
-                        logger.debug("Already in db, skipping...") 
-                        
-
-                if self.is_last_page_of_letter(page): break
+                yield recipe_list_url_spec % (self.SOURCE_URL, letter, p)
+                if self.is_last_page_of_letter(self.list_page):
+                    break
 
     def is_last_page_of_letter(self, page):
         nextprev_buttons = page.cssselect('.nextprev')
@@ -56,19 +37,7 @@ class FoodCom(RecipeWebsiteScraper):
                 return False
         # if nothing else returned by this point...
         return True
-        
-    def parse_recipe(self, recipe):
-        """Receives a recipe object containing only name source and url
-        Returns same object populated with ingredients"""
-        page = self.parse(recipe.url)
-        if page is None: return None
 
-        ingredients = page.cssselect('.ingredients .ingredient .name')
-        for ingredient in ingredients:
-            ingredient = self.remove_extraneous_whitespace(ingredient.text_content())
-            recipe.add_ingredient(ScraperIngredient(ingredient))
-       
-        return recipe 
 
 def main():
     parser = FoodCom.get_argparser()
