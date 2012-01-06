@@ -1,10 +1,10 @@
-from lxml import html
-from urlparse import urlparse, ParseResult
 import argparse
+
+from lxml import html
 
 from recipe_scrapers.models import ScraperRecipe, ScraperIngredient
 from recipe_scrapers import db
-from recipe_scrapers.utils import logger
+from recipe_scrapers.utils import logger, urltools
 
 class RecipeWebsiteScraper(object):
 
@@ -19,20 +19,11 @@ class RecipeWebsiteScraper(object):
         self.logger = logger.init("recipe_scrapers.sites.%s" % 
             ("".join(self.SOURCE_NAME.split()).lower()))
 
-    def relative_to_absolute(self, start_path, relative_url):
-        """converts a relative url at a specified (absolute) location
-        :param: start_path - the absolute path from which the relative url is being accessed
-        :param: relative_url - the relative url on the page"""
-        parsed_start_url = urlparse(start_path)
-        new_path = '/'.join(parsed_start_url.path.split('/')[:-1] + [ relative_url ] )
-        parsed_abs_url = ParseResult(scheme=parsed_start_url.scheme, netloc=parsed_start_url.netloc, \
-                                path=new_path, params=parsed_start_url.params, query=parsed_start_url.query, \
-                                fragment=parsed_start_url.fragment)
-
-        return parsed_abs_url.geturl()
-
-    def remove_extraneous_whitespace(self, string):
-       return " ".join(filter(lambda i: not i.isspace(), string.split()))
+    def clean_wspace(self, string):
+        """Cleans excess whitespace in string
+        "this   \n\r string\t\t123" -> "this string 123"
+        """
+        return " ".join(filter(lambda i: not i.isspace(), string.split()))
 
     def get_recipes(self, start_point=None):
         """Gets a full list of recipes for this source
@@ -41,7 +32,8 @@ class RecipeWebsiteScraper(object):
             self.list_page = self.parse(recipe_list_url)
             if self.list_page is not None:
                 for recipe in self.get_recipes_from_list_page(self.list_page):
-                    self.logger.debug("found %s at %s" % (recipe.recipe_name, recipe.url) )
+                    self.logger.debug("found %s at %s" % 
+                        (recipe.recipe_name, recipe.url) )
                     if self.refresh or not ScraperRecipe.recipe_in_db(recipe.url):
                         yield recipe
                     else:
@@ -52,9 +44,13 @@ class RecipeWebsiteScraper(object):
         recipe_links = list_page.cssselect(self.RECIPE_LINK_SELECTOR)
         for recipe_link in recipe_links:
             recipe_name = self.format_name(recipe_link.text_content())
-            recipe_url = self.relative_to_absolute(self.SOURCE_URL, recipe_link.get('href')) \
-                if self.RELATIVE_URLS else recipe_link.get('href')
-            recipe = ScraperRecipe(recipe_name, source=self.SOURCE_NAME, url=recipe_url)
+            recipe_href = recipe_link.get('href')
+            if self.RELATIVE_URLS:
+                recipe_url = urltools.rel_to_abs(self.SOURCE_URL, recipe_href)
+            else:
+                recipe_url = recipe_href
+            recipe = ScraperRecipe(recipe_name, source=self.SOURCE_NAME, 
+                                        url=recipe_url)
             yield recipe
 
     def format_name(self, recipe_name):
