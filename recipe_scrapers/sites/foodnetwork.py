@@ -33,10 +33,11 @@ class FoodNetwork(RecipeWebsiteScraper):
 
 
     def is_last_page_of_letter(self, page):
-        disabled_buttons = page.cssselect('.pglnks .dis span')
-        for button in disabled_buttons:
-            if "next" in button.text_content().lower():
-                return False
+        if page:
+            disabled_buttons = page.cssselect('.pglnks .dis span')
+            for button in disabled_buttons:
+                if "next" in button.text_content().lower():
+                    return False
         # if nothing else returned by this point...
         return True
         

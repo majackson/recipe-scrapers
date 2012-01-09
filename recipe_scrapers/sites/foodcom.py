@@ -31,10 +31,11 @@ class FoodCom(RecipeWebsiteScraper):
                     break
 
     def is_last_page_of_letter(self, page):
-        nextprev_buttons = page.cssselect('.nextprev')
-        for button in nextprev_buttons:
-            if "next" in button.text_content().lower():
-                return False
+        if page:
+            nextprev_buttons = page.cssselect('.nextprev')
+            for button in nextprev_buttons:
+                if "next" in button.text_content().lower():
+                    return False
         # if nothing else returned by this point...
         return True
 

@@ -30,8 +30,11 @@ class FoodChannel(RecipeWebsiteScraper):
                 break
 
     def is_last_page(self, page):
-        next_button = page.cssselect('.next')
-        return False if next_button[0].tag == 'a' else True
+        if page:
+            next_button = page.cssselect('.next')
+            return False if next_button[0].tag == 'a' else True
+        else:
+            return True
 
 def main():
     parser = FoodChannel.get_argparser()

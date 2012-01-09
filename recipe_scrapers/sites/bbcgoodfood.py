@@ -34,8 +34,13 @@ class BbcGoodFood(RecipeWebsiteScraper):
                     break
 
     def is_last_page_of_letter(self, page):
-        navlinks = page.cssselect('#pagesNavTop ul li a')
-        return not (navlinks and navlinks[-1].text_content().strip().lower() == 'next')
+        if page:
+            navlinks = page.cssselect('#pagesNavTop ul li a')
+            if navlinks:
+                return navlinks[-1].text_content().strip().lower() != 'next'
+
+        # if nothing returned by now...
+        return True
 
 
 def main():
