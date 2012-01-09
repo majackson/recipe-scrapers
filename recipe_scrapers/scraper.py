@@ -65,7 +65,7 @@ class RecipeWebsiteScraper(object):
 
         ingredients = page.cssselect(self.INGREDIENTS_SELECTOR)
         for ingredient in ingredients:
-            ingredient = self.remove_extraneous_whitespace(ingredient.text_content())
+            ingredient = self.clean_wspace(ingredient.text_content())
             recipe.add_ingredient(ScraperIngredient(ingredient))
        
         return recipe 
