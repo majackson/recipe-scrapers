@@ -16,10 +16,5 @@ class TestUrlTools(unittest.TestCase):
         self.assertEqual( urltools.rel_to_abs(absurl2, relurl2), \
                 "http://www.reddit.com/r/programming/comments/f2rei/")
 
-        absurl3 = "http://someurl.net/a/path"
-        relurl3 = "different/path"
-        self.assertEqual( urltools.rel_to_abs(absurl3, relurl3), \
-                "http://someurl.net/a/different/path")
-
 if __name__ == '__main__':
     unittest.main()

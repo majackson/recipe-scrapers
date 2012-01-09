@@ -8,7 +8,8 @@ def rel_to_abs(start_path, relative_url):
     relative_url - the relative url on the page"""
     remove_null = lambda x: bool(x)
     parsed_start_url = urlparse(start_path)
-    path_items = remove_null(parsed_start_url.path.split('/') + [relative_url]) 
+    path_items = filter(remove_null, parsed_start_url.path.split('/'))
+    path_items += [relative_url]
     new_path = '/'.join(path_items)
     parsed_abs_url = ParseResult(
                         scheme=parsed_start_url.scheme,
