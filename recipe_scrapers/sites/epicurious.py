@@ -37,7 +37,7 @@ class Epicurious(RecipeWebsiteScraper):
         ingredients = ingredients_text.split("<br>")
 
         for ingredient in ingredients:
-            ingredient = self.remove_extraneous_whitespace(ingredient)
+            ingredient = self.clean_wspace(ingredient)
             recipe.add_ingredient(ScraperIngredient(ingredient))
        
         return recipe 
