@@ -1,9 +1,6 @@
 import sys
 
-from recipe_scrapers.utils import logger
 from recipe_scrapers.scraper import RecipeWebsiteScraper
-
-logger = logger.init("recipe_scrapers.sites.bbcgoodfood")
 
 class BbcGoodFood(RecipeWebsiteScraper):
 
@@ -34,7 +31,7 @@ class BbcGoodFood(RecipeWebsiteScraper):
                     break
 
     def is_last_page_of_letter(self, page):
-        if page:
+        if page is not None:
             navlinks = page.cssselect('#pagesNavTop ul li a')
             if navlinks:
                 return navlinks[-1].text_content().strip().lower() != 'next'

@@ -51,9 +51,21 @@ class ScraperRecipe(ScraperModel):
         self.url = url
         self.ingredients = []
 
+    def validate(self):
+        rules = []
+
+        # recipe name not empty string or whitespace
+        rules.append(lambda: bool(self.recipe_name.strip()))
+
+        # one or more ingredient
+        rules.append(lambda: bool(self.ingredients))
+
+        return all(rule() for rule in rules)
+
     def save(self):
-        # TODO allow for multiple db types
-        self._mongo_save()
+        if self.validate():
+            # TODO allow for multiple db types
+            self._mongo_save()
 
     def _mongo_save(self):
         doc = self._format_mongo_doc()

@@ -2,9 +2,6 @@
 import sys
 
 from recipe_scrapers.scraper import RecipeWebsiteScraper
-from recipe_scrapers.utils import logger
-
-logger = logger.init("recipe_scrapers.sites.foodnetwork")
 
 class FoodNetwork(RecipeWebsiteScraper):
 

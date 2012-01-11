@@ -23,7 +23,7 @@ class RecipeWebsiteScraper(object):
         """Cleans excess whitespace in string
         "this   \n\r string\t\t123" -> "this string 123"
         """
-        return " ".join(filter(lambda i: not i.isspace(), string.split()))
+        return " ".join(filter(lambda i: not i.isspace(), string.split())).strip()
 
     def get_recipes(self, start_point=None):
         """Gets a full list of recipes for this source
@@ -83,8 +83,8 @@ class RecipeWebsiteScraper(object):
     def get_all_recipes(self, start_point=None):
         for recipe in self.get_recipes(start_point):
             try:
-                self.parse_recipe(recipe) 
-                yield recipe
+                if self.parse_recipe(recipe) is not None:
+                    yield recipe
             except IOError:
                 continue
 

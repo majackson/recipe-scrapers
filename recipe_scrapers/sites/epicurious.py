@@ -1,8 +1,5 @@
 from recipe_scrapers.scraper import RecipeWebsiteScraper
 from recipe_scrapers.models import ScraperIngredient
-from recipe_scrapers.utils import logger
-
-logger = logger.init("recipe_scrapers.sites.epicurious")
 
 class Epicurious(RecipeWebsiteScraper):
 
@@ -32,7 +29,10 @@ class Epicurious(RecipeWebsiteScraper):
         page = self.parse(recipe.url)
         if page is None: return None
 
-        ingredients_text = page.cssselect(self.INGREDIENTS_SELECTOR)[0].text_content()
+        ingredients_text = page.cssselect(self.INGREDIENTS_SELECTOR)
+        if not ingredients_text: return None  # no ingredients listed
+        
+        ingredients_text = ingredients_text[0].text_content()
         ingredients_text = ingredients_text.replace("<h2>Ingredients</h2>", "")
         ingredients = ingredients_text.split("<br>")
 

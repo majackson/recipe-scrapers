@@ -1,9 +1,6 @@
 import sys
 
 from recipe_scrapers.scraper import RecipeWebsiteScraper
-from recipe_scrapers.utils import logger
-
-logger = logger.init("recipe_scrapers.sites.foodchannel")
 
 class FoodChannel(RecipeWebsiteScraper):
 
@@ -13,7 +10,7 @@ class FoodChannel(RecipeWebsiteScraper):
 
     RELATIVE_URLS = True
 
-    RECIPE_LINK_SELECTOR = '.recipe-result a'
+    RECIPE_LINK_SELECTOR = '.fl.block a'
     INGREDIENTS_SELECTOR = '#ingredients_list li'
 
     def get_recipe_list_urls(self, start_point=None):
@@ -30,7 +27,7 @@ class FoodChannel(RecipeWebsiteScraper):
                 break
 
     def is_last_page(self, page):
-        if page:
+        if page is not None:
             next_button = page.cssselect('.next')
             return False if next_button[0].tag == 'a' else True
         else:
