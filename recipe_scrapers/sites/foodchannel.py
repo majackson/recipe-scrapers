@@ -10,8 +10,8 @@ class FoodChannel(RecipeWebsiteScraper):
 
     RELATIVE_URLS = True
 
-    RECIPE_LINK_SELECTOR = '.fl.block a'
-    INGREDIENTS_SELECTOR = '#ingredients_list li'
+    RECIPE_LINK_SELECTOR = '.recipes .tile_content h2 a'
+    INGREDIENTS_SELECTOR = '#ingredients li'
 
     def get_recipe_list_urls(self, start_point=None):
         recipe_list_url_spec = '%s/recipes/?page=%d'
@@ -27,10 +27,7 @@ class FoodChannel(RecipeWebsiteScraper):
                 break
 
     def is_last_page(self, page):
-        if page is not None:
-            next_button = page.cssselect('.next')
-            return False if next_button[0].tag == 'a' else True
-        else:
+        if page is None:  # will be none if previous page num 404'd
             return True
 
 def main():

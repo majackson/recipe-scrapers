@@ -17,7 +17,7 @@ setup(
     author_email='me@mattjackson.eu',
     url='http://mattjackson.eu',
     packages=find_packages(),
-    install_requires=['lxml', 'pymongo', 'argparse'],
+    install_requires=['cssselect', 'lxml', 'pymongo', 'argparse'],
     entry_points={
         'console_scripts': [
             'foodcom-scraper = recipe_scrapers.sites.foodcom:main',

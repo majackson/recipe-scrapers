@@ -8,20 +8,15 @@ class AllRecipes(RecipeWebsiteScraper):
     SOURCE_NAME = "All Recipes" 
     SOURCE_URL = "http://allrecipes.com"
 
-    RELATIVE_URLS = False
+    RELATIVE_URLS = True
 
-    RECIPE_LINK_SELECTOR = ".rectable h3 a"
-    INGREDIENTS_SELECTOR = '.ingredients ul li'
+    RECIPE_LINK_SELECTOR = ".grid-result-cntnr .recipe-info p a.title"
+    INGREDIENTS_SELECTOR = '.ingredient-wrap li label .ingredient_name'
 
     def get_recipe_list_urls(self, start_point=None):
-        recipe_list_url_spec = "%s/recipes/ViewAll.aspx?Page=%d"
+        recipe_list_url_spec = "%s/recipes/main.aspx?evt19=1&st=t&p34=HR_SortByTitle&Page=%d"
 
-        if start_point:
-            page_numbers = [start_point]
-        else:
-            page_numbers = xrange(1, sys.maxint)
-
-        for page_num in page_numbers:
+        for page_num in xrange(1, sys.maxint):
             yield recipe_list_url_spec % (self.SOURCE_URL, page_num)
             if self.is_last_page(self.list_page):
                 break
@@ -29,7 +24,7 @@ class AllRecipes(RecipeWebsiteScraper):
     def is_last_page(self, page):
         """Determines whether this page is the last page of recipes"""
         if page:
-            linkselector = '#ctl00_CenterColumnPlaceHolder_Pager_corePager_pageNumbers *' 
+            linkselector = '#ctl00_CenterColumnPlaceHolder_RecipeContainer_ucPager_corePager_pageNumbers *' 
             links = page.cssselect(linkselector)
             last_link = links[-1]
             if last_link.tag == 'a':

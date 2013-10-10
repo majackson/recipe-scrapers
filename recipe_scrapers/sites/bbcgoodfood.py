@@ -10,33 +10,22 @@ class BbcGoodFood(RecipeWebsiteScraper):
 
     RELATIVE_URLS = True
 
-    RECIPE_LINK_SELECTOR = '#currentLetterList li h4 a'
-    INGREDIENTS_SELECTOR = '#ingredients ul li'
-    RECIPES_PER_PAGE = 40
+    RECIPE_LINK_SELECTOR = '.node-recipe .node-title a'
+    INGREDIENTS_SELECTOR = '#recipe-ingredients ul li'
 
     def get_recipe_list_urls(self, start_point=None):
 
-        recipe_list_url_spec = "%s/searchAZ.do?letter=%s&pager.offset=%d"
+        recipe_list_url_spec = "%s/search/recipes/?query=&page=%d"
 
-        if start_point is None:
-            letters = map(chr, range(ord('A'), ord('A')+26))
-        else:
-            letters = [start_point]
+        for page_num in xrange(0, sys.maxint):
+            yield recipe_list_url_spec % (self.SOURCE_URL, page_num) 
+            if self.is_last_page(self.list_page):
+                break
 
-        for letter in letters:       
-            page_offsets = xrange(0, sys.maxint, self.RECIPES_PER_PAGE)
-            for page_offset in page_offsets:
-                yield recipe_list_url_spec % (self.SOURCE_URL, letter, page_offset) 
-                if self.is_last_page_of_letter(self.list_page):
-                    break
-
-    def is_last_page_of_letter(self, page):
+    def is_last_page(self, page):
         if page is not None:
-            navlinks = page.cssselect('#pagesNavTop ul li a')
-            if navlinks:
-                return navlinks[-1].text_content().strip().lower() != 'next'
+            return bool(page.cssselect('.page404'))
 
-        # if nothing returned by now...
         return True
 
 
